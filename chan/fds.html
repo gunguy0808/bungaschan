@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>foda-se</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2b2b2b;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #292929;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2, h3 {
+            color: #e0e0e0;
+            margin-bottom: 10px;
+        }
+
+        .thread {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #444444;
+            padding-bottom: 20px;
+        }
+
+        .thread h2 {
+            color: #b39ddb; /* Roxo */
+        }
+
+        .thread p {
+            margin-bottom: 10px;
+        }
+
+        .respostas {
+            margin-top: 10px;
+            padding-left: 20px;
+            border-left: 2px solid #444444;
+        }
+
+        .resposta {
+            margin-bottom: 10px;
+        }
+
+        .resposta p {
+            margin-bottom: 5px;
+        }
+
+        img {
+            max-width: 100%;
+            margin-bottom: 10px;
+        }
+
+        form {
+            margin-top: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 80px;
+            margin-bottom: 10px;
+            background-color: #383838;
+            color: #ffffff;
+            border: 1px solid #444444;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            background-color: #7e57c2; /* Roxo */
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #5e35b1; /* Roxo mais escuro ao passar o mouse */
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>foda-se</h1>
+
+    <!-- Formulário para criar um novo tópico -->
+    <h2>Criar Novo Tópico</h2>
+    <form id="new-topic-form">
+        <textarea id="new-topic-content" placeholder="Digite seu tópico aqui"></textarea>
+        <input type="file" id="new-topic-image" accept="image/*">
+        <input type="submit" value="Criar Tópico">
+    </form>
+
+    <!-- Lista de tópicos -->
+    <div id="topic-list"></div>
+</div>
+
+<script>
+    // Função para criar um novo tópico
+    function createTopic(content, image) {
+        var topicList = document.getElementById('topic-list');
+        var topic = document.createElement('div');
+        topic.className = 'thread';
+
+        var topicContent = document.createElement('h2');
+        topicContent.textContent = content;
+
+        if (image) {
+            var img = document.createElement('img');
+            img.src = URL.createObjectURL(image);
+            topic.appendChild(img);
+        }
+
+        var responses = document.createElement('div');
+        responses.className = 'respostas';
+
+        var responseForm = document.createElement('form');
+        responseForm.className = 'resposta-form';
+        responseForm.innerHTML = `
+            <textarea placeholder="Digite sua resposta aqui"></textarea>
+            <input type="submit" value="Responder">
+        `;
+        responses.appendChild(responseForm);
+
+        topic.appendChild(topicContent);
+        topic.appendChild(responses);
+        topicList.appendChild(topic);
+    }
+
+    // Função para criar uma nova resposta
+    function createResponse(parent, content) {
+        var response = document.createElement('div');
+        response.className = 'resposta';
+        var responseContent = document.createElement('p');
+        responseContent.textContent = content;
+        response.appendChild(responseContent);
+        parent.appendChild(response);
+    }
+
+    // Event listener para o formulário de criação de tópico
+    var newTopicForm = document.getElementById('new-topic-form');
+    newTopicForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var content = document.getElementById('new-topic-content').value;
+        var image = document.getElementById('new-topic-image').files[0];
+        createTopic(content, image);
+        // Limpar campos do formulário após a criação do tópico
+        newTopicForm.reset();
+    });
+
+    // Event listener para criar uma resposta a um tópico existente
+    document.addEventListener('submit', function (e) {
+        if (e.target && e.target.classList.contains('resposta-form')) {
+            e.preventDefault();
+            var content = e.target.querySelector('textarea').value;
+            var parentThread = e.target.closest('.thread');
+            var responses = parentThread.querySelector('.respostas');
+            createResponse(responses, content);
+            // Limpar campo de textarea após a criação da resposta
+            e.target.reset();
+        }
+    });
+</script>
+</body>
+</html>
